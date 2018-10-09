@@ -1,9 +1,5 @@
 # **Behavioral Cloning** 
 
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Behavioral Cloning Project**
@@ -54,47 +50,44 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+I am using [nVidia CNN architecture](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) which is made of a normalization layer, 5 convolution layers, and 3 fully connected layers. I used 2x2 strides for first 3 convolution layers with a 5x5 kernel. Next two convolution layers has 1x1 stride with a 3x3 kernel. 
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+The model includes RELU activations to introduce nonlinearity, and the data is normalized in the model using a Keras lambda layer. To focus more on the important parts of the image, I am cropping input images to the model using Cropping2D layer (50 pixels from top and 20 from bottom).
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+I have limited the number of epoch to 4 for training the model which does not allow overfitting in such short duration. The model was trained and validated on different data sets (data split with 0.2 ratio to original data set) to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually.
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-
-For details about how I created the training data, see the next section. 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road, and smooth turing using mouse to steer vehicle in the simulator.
 
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+I started with the more advanced neural network model straight away. In order to gauge how well the model was working, I split my center image and steering angle data into a training and validation set. I found that my model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+Then I had to augment data to provide a balance between steering angles and not totally weight on 0.00 degree. To do that we flip the image and negate the angle. What this does is we are providing more image and angle inputs with same data set. Then I also included left and right camera images mapped with an angle and a correction of 0.20 to handle their offset from center position.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road for 1 full lap.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture consisted of a convolution neural network with the following layers and layer sizes as follows:
+
+1. Lambda       - input (160, 320, 3)
+2. Cropping     - 50 from top and 20 from bottom
+3. Conv2D(relu) - 5x5 @ 24 filters - 2x2 stride
+4. Conv2D(relu) - 5x5 @ 36 filters - 2x2 stride
+5. Conv2D(relu) - 5x5 @ 48 filters - 2x2 stride
+6. Conv2D(relu) - 3x3 @ 64 filters - 1x1 stride
+7. Conv2D(relu) - 3x3 @ 64 filters - 1x1 stride
+8. Dense
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
